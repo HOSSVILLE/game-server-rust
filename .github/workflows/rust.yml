@@ -9,10 +9,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+
       - name: Install lastest rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchan: stable
+          toolchain: stable
           default: true
           override: true
       - name: Build
