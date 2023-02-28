@@ -17,7 +17,7 @@ jobs:
           default: true
           override: true
       - name: Build
-        run: cargo build --all --release && strip target/release/PROJECT_NAME && mv target/release/game-server-rust target/release/PROJECT_NAME_amd64
+        run: cargo build --all --release && strip target/release/game_server && mv target/release/game-server target/release/game_server_amd64
 
       - name: Release
         uses: softprops/action-gh-release@v1
