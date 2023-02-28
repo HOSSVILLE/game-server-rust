@@ -1,0 +1,21 @@
+[package]
+name = "game-server"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+redis = "*"
+json = "*"
+
+[dependencies.uuid]
+version = "1.2.2"
+features = [
+    "v4",
+    "fast-rng",
+    "macro-diagnostics"
+]
+
+[dependencies.rocket]
+version = "0.5.0-rc.2"
