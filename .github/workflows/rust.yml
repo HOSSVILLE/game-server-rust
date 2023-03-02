@@ -28,6 +28,10 @@ jobs:
 
       - name: Autotag
         uses: DanySK/semver-autotag-action@master
+
+      - name: Push Tag
+        shell: bash
+        run: git push 
          
       - name: Release
         uses: softprops/action-gh-release@v1
