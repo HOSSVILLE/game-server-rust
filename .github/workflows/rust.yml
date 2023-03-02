@@ -1,6 +1,9 @@
 name: Rust
 
-on: [push]
+on: 
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -20,6 +23,9 @@ jobs:
           default: true
           override: true
 
+      - name: Cache
+        uses: Swatinem/rust-cache@v2
+        
       - name: Build
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 
