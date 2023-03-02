@@ -19,13 +19,13 @@ jobs:
       - name: Install lastest rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
           default: true
           override: true
 
       - name: Cache
         uses: Swatinem/rust-cache@v2
-        
+
       - name: Build
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 

@@ -1,21 +1,66 @@
 extern crate redis;
-extern crate json;
-
-use json::JsonValue;
+extern crate rocket_contrib;
+extern crate serde_json;
+//use json::JsonValue;
 use uuid::Uuid;
+
+//use serde::Deseria3ze;
 
 #[macro_use] extern crate rocket;
 
-#[get("/character")]
-fn character() -> &'static str {
-    println!("get Character");
-    "some characters"
+
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct User {
+  pub name: String,
+  pub firstname: String,
+  pub surname: String,
+  #[serde(skip_deserializing)]
+  pub id: String
 }
 
-#[post("/character", format = "application/json", data="<input>")]
-fn create_character(input: String) -> &'static str {
-    println!("received input: {}",input);
-    "created Character"
+#[post("/character", format = "application/json", data = "<input>")]
+fn create_character(input: String) {
+    let mut data : User = serde_json::from_str(&input).unwrap();
+    
+    data.id = Uuid::new_v4().to_string();
+
+    
+    let mut conn = redis::Client::open("redis://localhost:6379")
+    .expect ("invalid connection url")
+    .get_connection()
+    .expect("failed to connect to Redis");
+
+    let _: () = redis::cmd("SET")
+    .arg(&data.id)
+    .arg(serde_json::to_string(&data).unwrap())
+    .query(&mut conn)
+    .expect("failed to execute SET for 'foo'");
+
+    let answer: String = redis::cmd("GET")
+    .arg(data.id)
+    .query(&mut conn)
+    .expect("failed to execute GET for for foo");
+    println!("character saved {}",answer);
+
+
+
+}
+
+#[get("/character")]
+fn get_characters() {
+
+    let mut conn = redis::Client::open("redis://localhost:6379")
+    .expect ("invalid connection url")
+    .get_connection()
+    .expect("failed to connect to Redis");
+
+    let answer: Vec<String> = redis::cmd("KEYS")
+    .arg("*")
+    .query(&mut conn)
+    .expect("failed to execute GET for for foo");
+
+    println!("character retrieved {:?}",answer);
+
 }
 
 //1. create new character or load existing character
@@ -23,44 +68,5 @@ fn create_character(input: String) -> &'static str {
 #[launch]
 fn my_server() -> _ {
 
-    let uuid = Uuid::new_v4();
-
-    let data = json::object!{
-        id: uuid.to_string(),
-        foo: "bar"
-    };
-
-    let character: JsonValue = json::object!{
-        id: "hossman",
-        gameid: uuid.to_string()
-    };
-
-    println!("data to store {}", data.dump());
-    let mut conn = redis::Client::open("redis://localhost:6379")
-    .expect ("invalid connection url")
-    .get_connection()
-    .expect("failed to connect to Redis");
-
-    //Add/update data to Redis
-    let _: () = redis::cmd("SET")
-        .arg(uuid.to_string())
-        .arg(data.dump())
-        .query(&mut conn)
-        .expect("failed to execute SET for 'foo'");
-
-    let _: () = redis::cmd("SET")
-        .arg("hossman")
-        .arg(character.dump())
-        .query(&mut conn)
-        .expect("failed to execute SET for 'foo'");
-
-    //get data from redis
-    let answer: String = redis::cmd("GET")
-    .arg(uuid.to_string())
-    .query(&mut conn)
-    .expect("failed to execute GET for for foo");
-    println!("Value for foo {}",answer);
-
-
-   rocket::build().mount("/", routes![character])
+   rocket::build().mount("/", routes![create_character,get_characters])
 }
