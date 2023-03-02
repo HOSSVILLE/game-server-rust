@@ -12,8 +12,9 @@ fn character() -> &'static str {
     "some characters"
 }
 
-#[post("/character")]
-fn create_character() -> &'static str {
+#[post("/character", format = "application/json", data="<input>")]
+fn create_character(input: String) -> &'static str {
+    println!("received input: {}",input);
     "created Character"
 }
 
