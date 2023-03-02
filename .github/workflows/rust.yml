@@ -23,17 +23,11 @@ jobs:
       - name: Build
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 
-      - name: Git Version
-        id: version
-        uses: codacy/git-version@2.5.4
-
-      - name: Use the version
-        run: |
-          echo ${{ steps.version.outputs.version }}
-          
-      - name: Use the previous version
-        run: |
-          echo ${{ steps.version.outputs.previous-version }}
+      - name: Bump version and push tag
+        uses: laputansoft/github-tag-action@v4.6
+        with: 
+          github_token: ${{ env.github-token }}
+          tag: ${{ steps.package-version.outputs.version }}
         
       - name: Release
         uses: softprops/action-gh-release@v1
