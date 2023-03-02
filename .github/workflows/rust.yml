@@ -9,6 +9,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
+        with:
+          fetch-depth: 0
 
       - name: Install lastest rust toolchain
         uses: actions-rs/toolchain@v1
@@ -20,10 +22,12 @@ jobs:
       - name: Build
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 
-      - id: semver-tag
-        uses: gandarez/semver-action@vlatest
-      - name: "Create Tag"
-        run: echo "tag ${{ steps.semver-tag.outputs.semver_tag }}"
+      - name: Fetch Tags
+        shell: bash
+        run: git fetch --tags -f
+
+      - name: Autotag
+        uses: DanySK/semver-autotag-action@master
          
       - name: Release
         uses: softprops/action-gh-release@v1
