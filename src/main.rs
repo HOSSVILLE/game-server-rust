@@ -21,7 +21,6 @@ fn create_character() -> &'static str {
 //2. create new game or load existing game
 #[launch]
 fn my_server() -> _ {
-    println!("Hello, world!");
 
     let uuid = Uuid::new_v4();
 

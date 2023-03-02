@@ -16,6 +16,7 @@ jobs:
           toolchain: stable
           default: true
           override: true
+
       - name: Build
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 
