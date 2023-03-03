@@ -30,16 +30,15 @@ jobs:
         run: cargo build --all --release && strip target/release/game-server && mv target/release/game-server target/release/game-server_amd64
 
       - name: Bump version and push tag
-        uses: laputansoft/github-tag-action@v4.6
-        with: 
-          github_token: ${{ env.github-token }}
-          tag: ${{ steps.package-version.outputs.version }}
-        
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
         with:
-          files: |
-            target/release/game-server_amd64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}  
+      
