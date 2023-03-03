@@ -1,5 +1,4 @@
 
-
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct User {
   pub name: String,
