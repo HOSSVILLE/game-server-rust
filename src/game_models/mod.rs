@@ -17,3 +17,15 @@ pub struct CreateResponse {
 pub struct GetCharacterRequest {
   pub character_id: String
 }
+
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct GameCreateRequest {
+  pub character_id: String
+}
+
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct Game {
+  pub game_id: String,
+  pub character_id: String
+}
+

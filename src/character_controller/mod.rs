@@ -6,20 +6,21 @@ extern crate rocket_contrib;
 extern crate serde_json;
 
 use uuid::Uuid;
+// all endpoints mounted at '/character'
 
-
-#[get("/character/<character_id>")]
+#[get("/<character_id>")]
 pub fn get_character(character_id : String) -> String {
 
   let data : GetCharacterRequest  = GetCharacterRequest {
     character_id : format!("{}",character_id.as_str())
   };
     
-    let mut conn = redis::Client::open("redis://localhost:6379")
+    let mut conn = redis::Client::open("redis://localhost:6379/0")
     .expect ("invalid connection url")
     .get_connection()
-    .expect("failed to connect to Redis");
+    .unwrap();
 
+    //let answer: String = conn.json_get(data.character_id,".");
     let answer: String = redis::cmd("GET")
     .arg(data.character_id)
     .query(&mut conn)
@@ -27,11 +28,31 @@ pub fn get_character(character_id : String) -> String {
 
     println!("character retrieved {:?}",answer);
 
-    return answer;
+    return serde_json::to_string(&answer).unwrap()
 
 }
 
-#[post("/character", format = "application/json", data = "<input>")]
+#[get("/")]
+pub fn get_characters() -> String {
+
+    let mut conn = redis::Client::open("redis://localhost:6379/0")
+    .expect ("invalid connection url")
+    .get_connection()
+    .unwrap();
+
+    //let answer: String = conn.json_get(data.character_id,".");
+    let answer: Vec<String> = redis::cmd("keys")
+    .arg("*")
+    .query(&mut conn)
+    .expect("failed to execute GET for for foo");
+
+    println!("character retrieved {:?}",answer);
+
+    return serde_json::to_string(&answer).unwrap()
+
+}
+
+#[post("/", format = "application/json", data = "<input>")]
 pub fn create_character(input: String) -> String {
     let mut data :  User = serde_json::from_str(&input).unwrap();
     
@@ -39,7 +60,7 @@ pub fn create_character(input: String) -> String {
 
     data.id = uuid.to_string();
     
-    let mut conn = redis::Client::open("redis://localhost:6379")
+    let mut conn = redis::Client::open("redis://localhost:6379/0")
     .expect ("invalid connection url")
     .get_connection()
     .expect("failed to connect to Redis");
