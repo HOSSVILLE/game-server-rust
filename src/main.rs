@@ -4,13 +4,12 @@ extern crate redis;
 
 //internal mods
 mod game_models;
-mod character_controller;
-mod game_controller;
+mod controllers;
 
 #[launch]
 fn my_server() -> _ {
 
    rocket::build()
-      .mount("/character", routes![character_controller::create_character,character_controller::get_character, character_controller::get_characters])
-      .mount("/game", routes![game_controller::create_game, game_controller::get_games])
+      .mount("/character", routes![controllers::character::create_character,controllers::character::get_character, controllers::character::get_characters])
+      .mount("/game", routes![controllers::game::create_game, controllers::game::get_games])
 }

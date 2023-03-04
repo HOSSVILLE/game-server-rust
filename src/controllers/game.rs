@@ -1,4 +1,5 @@
 use crate::game_models::{GameCreateRequest, Game};
+
 use rocket::http::Status;
 
 extern crate redis;
