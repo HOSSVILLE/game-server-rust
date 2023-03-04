@@ -1,5 +1,4 @@
 extern crate redis;
-extern crate rocket_contrib;
 
 #[macro_use] extern crate rocket;
 

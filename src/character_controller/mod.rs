@@ -2,7 +2,6 @@
 use crate::game_models::{GetCharacterRequest, User, CreateResponse};
 
 extern crate redis;
-extern crate rocket_contrib;
 extern crate serde_json;
 
 use uuid::Uuid;

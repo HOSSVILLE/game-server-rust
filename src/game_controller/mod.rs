@@ -1,7 +1,6 @@
 use crate::game_models::{GameCreateRequest, Game};
 
 extern crate redis;
-extern crate rocket_contrib;
 extern crate serde_json;
 
 use uuid::Uuid;
