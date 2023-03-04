@@ -4,11 +4,12 @@ use crate::game_models::{GetCharacterRequest, User, CreateResponse};
 extern crate redis;
 extern crate serde_json;
 
+use rocket::http::Status;
 use uuid::Uuid;
 // all endpoints mounted at '/character'
 
 #[get("/<character_id>")]
-pub fn get_character(character_id : String) -> String {
+pub fn get_character(character_id : String) -> (Status, String) {
 
   let data : GetCharacterRequest  = GetCharacterRequest {
     character_id : format!("{}",character_id.as_str())
@@ -27,12 +28,12 @@ pub fn get_character(character_id : String) -> String {
 
     println!("character retrieved {:?}",answer);
 
-    return serde_json::to_string(&answer).unwrap()
+    return (Status::Ok, serde_json::to_string(&answer).unwrap())
 
 }
 
 #[get("/")]
-pub fn get_characters() -> String {
+pub fn get_characters() -> (Status, String) {
 
     let mut conn = redis::Client::open("redis://localhost:6379/0")
     .expect ("invalid connection url")
@@ -47,12 +48,12 @@ pub fn get_characters() -> String {
 
     println!("character retrieved {:?}",answer);
 
-    return serde_json::to_string(&answer).unwrap()
+    return (Status::Ok, serde_json::to_string(&answer).unwrap())
 
 }
 
 #[post("/", format = "application/json", data = "<input>")]
-pub fn create_character(input: String) -> String {
+pub fn create_character(input: String) -> (Status, String) {
     let mut data :  User = serde_json::from_str(&input).unwrap();
     
     let uuid: Uuid = Uuid::new_v4();
@@ -80,7 +81,7 @@ pub fn create_character(input: String) -> String {
       character_id: uuid.to_string()
     };
 
-  return serde_json::to_string(&response).unwrap()
+  return (Status::Created, serde_json::to_string(&response).unwrap())
     
 
 
