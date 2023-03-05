@@ -3,7 +3,7 @@ extern crate redis;
 #[macro_use] extern crate rocket;
 
 //internal mods
-mod game_models;
+mod models;
 mod controllers;
 
 #[launch]

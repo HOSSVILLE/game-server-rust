@@ -1,5 +1,5 @@
 
-use crate::game_models::{GetCharacterRequest, User, CreateResponse};
+use crate::models::{GetCharacterRequest, User, CreateResponse};
 
 extern crate redis;
 extern crate serde_json;

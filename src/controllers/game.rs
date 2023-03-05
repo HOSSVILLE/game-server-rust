@@ -1,4 +1,4 @@
-use crate::game_models::{GameCreateRequest, Game};
+use crate::models::{GameCreateRequest, Game};
 
 use rocket::http::Status;
 
